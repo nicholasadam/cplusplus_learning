@@ -1,0 +1,60 @@
+basic command structure
+- program options arguments
+ex:
+python test.py -a 8
+ls -a /dev
+gcc -wall -o hello hello.c
+
+pwd
+ls
+less
+man
+
+command line editor: nano, vim
+
+#include <stdio.h>
+
+int main() {
+  printf("Hello World!\n");
+  return 0;
+}
+
+gcc -Wall -o hello hello.c
+
+The gcc command takes a list of source files to compile (in this case, just hello.c) and outputs the compiled executable (or a list of errors if the program does not compile). In the above command, we are passing two flags in addition to the filename: -Wall (Warnings: all) says to turn on all compiler warnings, and -o hello says we want the output executable file to be named hello. If we omit the -o hello option, then gcc defaults to producing an executable named a.out (not very informative).
+Note that if we are writing C++ code instead of plain C code, everything is exactly the same except that we use the g++ command instead of gcc.
+
+To run the compiled executable, we run the executable name as a command:
+
+./hello
+Note that the ./ indicates that we're running a program located in the current directory.
+
+Always compile using the -Wall flag.
+
+treating all warnings like errors
+
+Using a Makefile
+Typing compilation commands over and over each time you change your program wastes a lot of time (and encourages you to leave off things like -Wall, which you should never do). As our programs get more complicated and involve multiple source files, the compilation command gets longer and this problem gets worse. Since our objective in using the terminal is to be lazy efficient, we can automate the build process by using a special file called a Makefile. This is a file used by the program make that says how to compile your program.
+
+Note that the two indented lines must be indented with actual tabs (not spaces). If you copy and pasted from above, you'll likely need to fix this.
+A Makefile consists of a set of targets, each of which tells make how to do something. The example above contains two targets: hello, which says how to compile the hello executable, and clean, which says how to clean up after the compiler by deleting generated files (in this case, just the hello executable). Each target may specify a set of dependencies, which are filenames and/or other target names that appear on the same line as the target name after the colon. In this example, the hello target has one dependency (the hello.c file) and the clean target has no dependencies. Additionally, each target may specify a set of zero or more commands to execute when the target is invoked. In this example, both targets specify a single command to run: hello runs gcc to compile the program, and clean runs rm to clean up. Note the use of three variables in this Makefile: $(CC) and $(CFLAGS) are defined in the Makefile itself (on the first two lines), and $@ is a special built-in Makefile variable that evaluates to the name of the current target (which in this case is hello).
+
+The Makefile specifies what happens when targets are invoked, but a user still has to actually invoke the target. Invoking a target is simple:
+
+make [targetname]
+
+In this example, running make hello would invoke GCC to compile the program, and running make clean would delete the compiled executable (if it exists). If you run make by itself without any target name, make defaults to building the first target (which is hello in this case). Most often, real programs with Makefiles are built simply by calling make to build the first target (which usually compiles the entire program). This convention avoids requiring the user to know anything about the target names. There are also some common, idiomatic target names (e.g., most Makefiles have a clean target that deletes all temporary/generated files, such as in this example).
+One of the reasons make is useful is that it only compiles files when it actually needs to -- i.e., only if the corresponding source files have actually changed since the last compilation. This is the significance of the hello.c dependency specified for the first target and is one of the ways that make uses dependencies.
+
+To see this process in action, run make clean to delete the existing executable (if it exists), then run make to build the hello executable. What will happen if you run make again? Try it out to check. Now, edit your source code (say by changing the message that prints) and then run make again.
+
+This is the basic idea behind Makefiles -- rather than having to repeatedly type long compilation commands, we just type make to compile the program and don't have to think about it. For large projects with many files and dependencies, Makefiles can get very complicated and scary looking. Focus on producing simple Makefiles that do what you need and try not to get bogged down in the many advanced features of make (if you're up for some light reading, here is the make online documentation).
+
+
+Miscellanea
+
+Downloading files: Downloading files from the Internet is easy from the command line using a utility like wget. Note that some systems do not have wget installed -- if this is the case, you can use curl instead, which is similar (check the manpage, as usual)! Here is an example of downloading my homepage using wget:
+wget https://www.bowdoin.edu/~sbarker/
+
+
+https://tildesites.bowdoin.edu/~sbarker/unix/
